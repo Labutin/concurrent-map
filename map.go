@@ -10,6 +10,7 @@ type CMapInterface interface {
 	Put(key string, value interface{})
 	Get(key string) (interface{}, bool)
 	IsExist(key string) bool
+	Count() int
 }
 
 // A thread safe map
@@ -63,4 +64,16 @@ func (t CMap) IsExist(key string) bool {
 	_, ok := shard.data[key]
 	shard.RUnlock()
 	return ok
+}
+
+// Count returns total number elements in the map
+func (t CMap) Count() int {
+	count := 0
+	for i := 0; i < len(t); i++ {
+		chunk := t[i]
+		chunk.RLock()
+		count += len(chunk.data)
+		chunk.RUnlock()
+	}
+	return count
 }
