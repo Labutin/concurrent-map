@@ -3,6 +3,7 @@ package concurrent_map
 import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"sort"
 	"strconv"
 	"sync"
 	"testing"
@@ -45,6 +46,19 @@ func TestCMap_Remove(t *testing.T) {
 	assert.Nil(t, cmap.Remove("test"))
 	assert.Error(t, cmap.Remove("test"))
 	assert.Error(t, cmap.Remove("test1"))
+}
+
+func TestCMap_Keys(t *testing.T) {
+	cmap := NewCMap(10)
+	keys := []string{}
+	for i := 0; i < 100; i++ {
+		keys = append(keys, strconv.Itoa(i))
+		cmap.Put(keys[i], i)
+	}
+	retKeys := cmap.Keys()
+	sort.Strings(retKeys)
+	sort.Strings(keys)
+	require.Equal(t, keys, retKeys)
 }
 
 func TestConcurrent1(t *testing.T) {

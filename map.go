@@ -12,6 +12,7 @@ type CMapInterface interface {
 	Get(key string) (interface{}, bool)
 	Remove(key string) error
 	IsExist(key string) bool
+	Keys() []string
 	Count() int
 }
 
@@ -90,4 +91,17 @@ func (t CMap) Count() int {
 		chunk.RUnlock()
 	}
 	return count
+}
+
+// Keys returns all keys in map
+func (t CMap) Keys() []string {
+	keys := []string{}
+	for i := 0; i < len(t); i++ {
+		t[i].RLock()
+		for k, _ := range t[i].data {
+			keys = append(keys, k)
+		}
+		t[i].RUnlock()
+	}
+	return keys
 }
