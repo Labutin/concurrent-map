@@ -1,9 +1,9 @@
 package concurrent_map
 
 import (
+	"errors"
 	"hash/fnv"
 	"sync"
-	"errors"
 )
 
 // Concurrent map interface
