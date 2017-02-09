@@ -3,12 +3,14 @@ package concurrent_map
 import (
 	"hash/fnv"
 	"sync"
+	"errors"
 )
 
 // Concurrent map interface
 type CMapInterface interface {
 	Put(key string, value interface{})
 	Get(key string) (interface{}, bool)
+	Remove(key string) error
 	IsExist(key string) bool
 	Count() int
 }
@@ -47,7 +49,7 @@ func (t CMap) Put(key string, value interface{}) {
 	shard.Unlock()
 }
 
-// Get returns value for givven key
+// Get returns value for given key
 func (t CMap) Get(key string) (interface{}, bool) {
 	shard := t.getShard(key)
 	shard.RLock()
@@ -55,6 +57,18 @@ func (t CMap) Get(key string) (interface{}, bool) {
 	shard.RUnlock()
 	return value, ok
 
+}
+
+// Remove deletes record with given key in map
+func (t CMap) Remove(key string) error {
+	if !t.IsExist(key) {
+		return errors.New("Key not found.")
+	}
+	shard := t.getShard(key)
+	shard.Lock()
+	delete(shard.data, key)
+	shard.Unlock()
+	return nil
 }
 
 // IsExist check for key present in map

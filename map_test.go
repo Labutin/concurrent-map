@@ -38,6 +38,15 @@ func TestCMap_GetPut(t *testing.T) {
 	assert.Equal(t, false, ok3)
 }
 
+func TestCMap_Remove(t *testing.T) {
+	cmap := NewCMap(10)
+	cmap.Put("test", 123)
+	assert.Equal(t, true, cmap.IsExist("test"))
+	assert.Nil(t, cmap.Remove("test"))
+	assert.Error(t, cmap.Remove("test"))
+	assert.Error(t, cmap.Remove("test1"))
+}
+
 func TestConcurrent1(t *testing.T) {
 	tasks := make(chan int, 100)
 	cmap := NewCMap(10)
