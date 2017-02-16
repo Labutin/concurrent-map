@@ -98,10 +98,22 @@ func (t CMap) Keys() []string {
 	keys := []string{}
 	for i := 0; i < len(t); i++ {
 		t[i].RLock()
-		for k, _ := range t[i].data {
+		for k := range t[i].data {
 			keys = append(keys, k)
 		}
 		t[i].RUnlock()
 	}
 	return keys
+}
+
+// LockShard locks shard for given key
+func (t CMap) LockShard(key string) {
+	shard := t.getShard(key)
+	shard.Lock()
+}
+
+// UnLockShard unlocks shard for given key
+func (t CMap) UnLockShard(key string) {
+	shard := t.getShard(key)
+	shard.Unlock()
 }
