@@ -14,6 +14,8 @@ type CMapInterface interface {
 	IsExist(key string) bool
 	Keys() []string
 	Count() int
+	LockShard(key string)
+	UnLockShard(key string)
 }
 
 // A thread safe map
